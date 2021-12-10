@@ -8,6 +8,7 @@
 #define TOP_PIN 2
 #define TAILSIDE_PIN 3
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(15, HEAD_PIN, NEO_GRB + NEO_KHZ800);
+TimerTC3 timer;
 
 //-------------------------------------------------------------------------------
 #define f_side 1
@@ -36,9 +37,9 @@ void TimerCnt()
   }
 }
 
-void phoenix(Adafruit_NeoPixel* strip)
+void phoenix(TimerTC3* timer, Adafruit_NeoPixel* strip)
 {
-  TimerTc3.stop();
+  timer->stop();
   analogWrite(biyoku, 255);
   after_burner(strip, 10);
   for (int i = 0; i < 1; i++)
@@ -48,13 +49,13 @@ void phoenix(Adafruit_NeoPixel* strip)
   colorWipe_revers(strip, strip->Color(255, 0, 0), 50);
   for (int i = 0; i < 20; i++)
   {
-    REDCycle(strip, 2);
+    REDCycle(f_side, r_side, strip, 2);
   }
   colorWipe(strip, strip->Color(0, 0, 0), 50);
   analogWrite(f_side, 0);
   analogWrite(r_side, 0);
   analogWrite(biyoku, 0);
-  TimerTc3.start();
+  timer->start();
 }
 
 //--------------------------------------------------------------------------
@@ -64,8 +65,8 @@ void setup()
   pinMode(SW, INPUT_PULLUP);
 
   //---------------------------------------------------
-  TimerTc3.initialize(10000);
-  TimerTc3.attachInterrupt(TimerCnt);
+  timer.initialize(10000);
+  timer.attachInterrupt(TimerCnt);
 
   strip.begin();
   strip.setBrightness(250);
@@ -86,44 +87,9 @@ void loop()
 
   if (fire == 1)
   {
-    phoenix(&strip);
+    phoenix(&timer, &strip);
     fire = 0;
   }
 }
 
 //----------------------------------------------------------------------------------
-
-void REDCycle(Adafruit_NeoPixel* strip, uint8_t wait)
-{
-  uint16_t i, j, f, r;
-
-  for (j = 0; j < 256 * 2; j++)
-  {
-    if (j < 256)
-    {
-      f = 255 - j;
-      r = j;
-    }
-    if (j > 255)
-    {
-      f = j - 255;
-      r = 255 - (j - 255);
-    }
-
-    for (i = 0; i < 11; i++)
-    {
-      strip->setPixelColor(i, Wheel_R(strip, ((i * 256 / 11) + j) & 255));
-    }
-    analogWrite(f_side, f);
-    analogWrite(r_side, r);
-    strip->setPixelColor(10, strip->Color(250, 0, 0));     // 150
-    strip->setPixelColor(11, strip->Color(250, 0, 0));     // 150
-    strip->setPixelColor(12, strip->Color(255, 255, 255)); // 150
-    strip->setPixelColor(13, strip->Color(255, 255, 255)); // 150
-    strip->show();
-    delay(wait);
-    //  int randTime= random(2,6);
-    //  delay(randTime);
-  }
-}
-

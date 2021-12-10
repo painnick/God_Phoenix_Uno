@@ -106,3 +106,37 @@ void colorWipe_revers(Adafruit_NeoPixel* strip, uint32_t c, uint8_t wait)
     delay(wait);
   }
 }
+
+void REDCycle(int front_side, int rear_side, Adafruit_NeoPixel* strip, uint8_t wait)
+{
+  uint16_t i, j, f, r;
+
+  for (j = 0; j < 256 * 2; j++)
+  {
+    if (j < 256)
+    {
+      f = 255 - j;
+      r = j;
+    }
+    if (j > 255)
+    {
+      f = j - 255;
+      r = 255 - (j - 255);
+    }
+
+    for (i = 0; i < 11; i++)
+    {
+      strip->setPixelColor(i, Wheel_R(strip, ((i * 256 / 11) + j) & 255));
+    }
+    analogWrite(front_side, f);
+    analogWrite(rear_side, r);
+    strip->setPixelColor(10, strip->Color(250, 0, 0));     // 150
+    strip->setPixelColor(11, strip->Color(250, 0, 0));     // 150
+    strip->setPixelColor(12, strip->Color(255, 255, 255)); // 150
+    strip->setPixelColor(13, strip->Color(255, 255, 255)); // 150
+    strip->show();
+    delay(wait);
+    //  int randTime= random(2,6);
+    //  delay(randTime);
+  }
+}
