@@ -1,5 +1,6 @@
 {
-    "board": "arduino:avr:uno",
-    "sketch": "GodPhoenix_Nano.ino",
-    "port": "COM3"
+    "board": "Seeeduino:samd:seeed_XIAO_m0",
+    "sketch": "GodPhoenix_Xiao.ino",
+    "port": "COM3",
+    "configuration": "usbstack=arduino,debug=off"
 }
