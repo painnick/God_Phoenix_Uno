@@ -68,19 +68,25 @@ void firstScene()
 
   head_strip.setBrightness(STRIP_BRIGHT);
   cockpit_strip.setBrightness(STRIP_BRIGHT);
-  engine_strip.setBrightness(STRIP_BRIGHT);
+  engine_strip.setBrightness(255);
 
   engine_normal(&engine_strip, 20);
 
-  rainbowCycle(&head_strip, 1, true);
-  rainbowCycle(&cockpit_strip, 1, false);
+  for(int i = 0; i < 5; i ++) {
+    rainbowCycle(&head_strip, 1, true);
+    rainbowCycle(&cockpit_strip, 1, false);
+  }
 
 #if DEBUG_MODE
   SerialUSB.println("Wipe");
 #endif
 
-  colorWipe(&head_strip, head_strip.Color(0, 0, 0), 10, true);
-  colorWipe(&cockpit_strip, cockpit_strip.Color(0, 0, 0), 10, false);
+  head_strip.setBrightness(5);
+  cockpit_strip.setBrightness(10);
+
+  uint32_t normalColor = head_strip.Color(255, 140, 0);
+  colorWipe(&head_strip, normalColor, 10, true);
+  colorWipe(&cockpit_strip, normalColor, 10, false);
 
   analogWrite(TOP_PIN, 0);
   analogWrite(TAILSIDE_PIN, 0);
