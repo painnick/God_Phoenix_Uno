@@ -1,5 +1,23 @@
 #include "Effects.h"
 
+//----------------------------------------------------------------------------------
+uint32_t Wheel(Adafruit_NeoPixel *strip, byte WheelPos)
+{
+  WheelPos = 255 - WheelPos;
+  if (WheelPos < 85)
+  {
+    return strip->Color(255 - WheelPos * 3, 0, WheelPos * 3);
+  }
+  if (WheelPos < 170)
+  {
+    WheelPos -= 85;
+    return strip->Color(0, WheelPos * 3, 255 - WheelPos * 3);
+  }
+  WheelPos -= 170;
+  return strip->Color(WheelPos * 3, 255 - WheelPos * 3, 0);
+}
+
+//----------------------------------------------------------------------------------
 void engine_normal(Adafruit_NeoPixel *strip, int t)
 {
   strip->setPixelColor(0, strip->Color(125, 0, 0));
@@ -51,14 +69,14 @@ void rainbowCycle(Adafruit_NeoPixel *strip, uint8_t wait, bool dual)
 
   int numPixels = dual ? strip->numPixels() / 2 : strip->numPixels();
 
-  for (colorIndex = 0; colorIndex < 256 * 5; colorIndex++)
+  for (colorIndex = 0; colorIndex < 256; colorIndex++)
   { // 5 cycles of all colors on wheel
     for (pixelIndex = 0; pixelIndex < numPixels; pixelIndex++)
     {
-      uint32_t wheelColor = Wheel(strip, ((pixelIndex * 256 / numPixels) + colorIndex) & 255);
-      strip->setPixelColor(pixelIndex, wheelColor);
+      uint32_t color = Wheel(strip, ((pixelIndex * 256 / numPixels) + colorIndex) & 255);
+      strip->setPixelColor(pixelIndex, color);
       if (dual) {
-        strip->setPixelColor((numPixels - 1) + numPixels - pixelIndex, wheelColor);
+        strip->setPixelColor((numPixels * 2 - 1) - pixelIndex, color);
       }
     }
     strip->show();
@@ -66,50 +84,15 @@ void rainbowCycle(Adafruit_NeoPixel *strip, uint8_t wait, bool dual)
   }
 }
 
-uint32_t Wheel(Adafruit_NeoPixel *strip, byte WheelPos)
+void colorWipe(Adafruit_NeoPixel *strip, uint32_t color, uint8_t wait, bool dual)
 {
-  WheelPos = 255 - WheelPos;
-  if (WheelPos < 85)
+  int numPixels = dual ? strip->numPixels() / 2 : strip->numPixels();
+  for (uint16_t pixelIndex = 0; pixelIndex < numPixels; pixelIndex++)
   {
-    return strip->Color(255 - WheelPos * 3, 0, WheelPos * 3);
-  }
-  if (WheelPos < 170)
-  {
-    WheelPos -= 85;
-    return strip->Color(0, WheelPos * 3, 255 - WheelPos * 3);
-  }
-  WheelPos -= 170;
-  return strip->Color(WheelPos * 3, 255 - WheelPos * 3, 0);
-}
-
-uint32_t Wheel_R(Adafruit_NeoPixel *strip, byte WheelPos)
-{
-  WheelPos = 255 - WheelPos;
-  if (WheelPos > 122)
-  {
-    return strip->Color(255 - WheelPos, 0, 0);
-  }
-  if (WheelPos < 123)
-  {
-    return strip->Color(132 + WheelPos, 0, 0);
-  }
-}
-
-void colorWipe(Adafruit_NeoPixel *strip, uint32_t color, uint8_t wait)
-{
-  uint16_t numPixels = strip->numPixels();
-  for (uint16_t i = 0; i < numPixels; i++)
-  {
-    strip->setPixelColor(i, color);
-    strip->show();
-    delay(wait);
-  }
-}
-void colorWipe_revers(Adafruit_NeoPixel *strip, uint32_t c, uint8_t wait)
-{
-  for (uint16_t i = 0; i < 12; i++)
-  {
-    strip->setPixelColor(11 - i, c);
+    strip->setPixelColor((numPixels - 1) - pixelIndex, color);
+    if (dual) {
+      strip->setPixelColor(numPixels + pixelIndex, color);
+    }
     strip->show();
     delay(wait);
   }
@@ -134,7 +117,7 @@ void REDCycle(int front_side, int rear_side, Adafruit_NeoPixel *strip, uint8_t w
 
     for (i = 0; i < 11; i++)
     {
-      strip->setPixelColor(i, Wheel_R(strip, ((i * 256 / 11) + j) & 255));
+      strip->setPixelColor(i, Wheel(strip, ((i * 256 / 11) + j) & 255));
     }
     analogWrite(front_side, f);
     analogWrite(rear_side, r);

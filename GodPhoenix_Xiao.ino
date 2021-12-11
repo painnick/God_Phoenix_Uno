@@ -6,7 +6,7 @@
 #define DEBUG_MODE 1
 
 #if DEBUG_MODE
-  #define STRIP_BRIGHT 10
+  #define STRIP_BRIGHT 5
 #else
   #define STRIP_BRIGHT 250
 #endif
@@ -66,6 +66,7 @@ void firstScene()
   engine_strip.setBrightness(STRIP_BRIGHT);
 
   engine_normal(&engine_strip, 20);
+
   rainbowCycle(&head_strip, 1, true);
   rainbowCycle(&cockpit_strip, 1, false);
 
@@ -73,8 +74,8 @@ void firstScene()
   SerialUSB.println("Wipe");
 #endif
 
-  colorWipe(&head_strip, head_strip.Color(0, 0, 0), 50);
-  colorWipe(&cockpit_strip, cockpit_strip.Color(0, 0, 0), 50);
+  colorWipe(&head_strip, head_strip.Color(0, 0, 0), 10, true);
+  colorWipe(&cockpit_strip, cockpit_strip.Color(0, 0, 0), 10, false);
 
   analogWrite(TOP_PIN, 0);
   analogWrite(TAILSIDE_PIN, 0);
@@ -116,12 +117,11 @@ void phoenix(TimerTC3* timer, Adafruit_NeoPixel* strip)
   {
     rainbowCycle(strip, 2, true);
   }
-  colorWipe_revers(strip, strip->Color(255, 0, 0), 50);
   for (int i = 0; i < 20; i++)
   {
     REDCycle(f_side, r_side, strip, 2);
   }
-  colorWipe(strip, strip->Color(0, 0, 0), 50);
+  colorWipe(strip, strip->Color(0, 0, 0), 50, true);
   analogWrite(f_side, 0);
   analogWrite(r_side, 0);
   analogWrite(biyoku, 0);
