@@ -9,4 +9,3 @@ void colorWipe(Adafruit_NeoPixel* strip, uint32_t c, uint8_t wait, bool dual);
 
 void engine_normal(Adafruit_NeoPixel* strip, int t);
 void after_burner(Adafruit_NeoPixel* strip, int t);
-void REDCycle(int front_side, int rear_side, Adafruit_NeoPixel* strip, uint8_t wait);

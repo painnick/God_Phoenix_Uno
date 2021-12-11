@@ -54,6 +54,11 @@ void firstScene()
   analogWrite(TAILSIDE_PIN, 250);
 
 #if DEBUG_MODE
+  SerialUSB.println("After Burner");
+#endif
+  after_burner(&engine_strip, 10);
+
+#if DEBUG_MODE
   SerialUSB.println("Rainbow");
 #endif
 
@@ -110,21 +115,15 @@ void loop()
 //----------------------------------------------------------------------------------
 void phoenix(TimerTC3* timer, Adafruit_NeoPixel* strip)
 {
-  timer->stop();
   analogWrite(biyoku, 255);
   after_burner(strip, 10);
   for (int i = 0; i < 1; i++)
   {
     rainbowCycle(strip, 2, true);
   }
-  for (int i = 0; i < 20; i++)
-  {
-    REDCycle(f_side, r_side, strip, 2);
-  }
   colorWipe(strip, strip->Color(0, 0, 0), 50, true);
   analogWrite(f_side, 0);
   analogWrite(r_side, 0);
   analogWrite(biyoku, 0);
-  timer->start();
 }
 
