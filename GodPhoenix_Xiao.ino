@@ -11,15 +11,15 @@
   #define STRIP_BRIGHT 250
 #endif
 
-#define HEAD_PIN 6 // 0번 라인 연결 문제
-#define COCKPIT_PIN 1
-#define TOP_PIN 3 // 2번 라인 연결 문제
-#define TAILSIDE_PIN 4
-#define ENGINE_PIN 5
+#define HEAD_PIN     0 // #1
+#define COCKPIT_PIN  1 // #2
+#define TOP_PIN      2 // #3
+#define TAILSIDE_PIN 4 // #5
+#define ENGINE_PIN   5 // #6 NOT WORK
+#define BUTTON_PIN   7 // #8
 
 Adafruit_NeoPixel head_strip = Adafruit_NeoPixel(11 * 2, HEAD_PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel cockpit_strip = Adafruit_NeoPixel(7, COCKPIT_PIN, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel engine_strip = Adafruit_NeoPixel(2, ENGINE_PIN, NEO_GRB + NEO_KHZ800);
 
 TimerTC3 timer;
 
@@ -28,7 +28,6 @@ TimerTC3 timer;
 #define r_side 2
 #define biyoku 3 // 미익
 #define tail_LED 4
-#define SW 10
 
 byte w, fire;
 
@@ -41,7 +40,7 @@ void setup()
   SerialUSB.println("===== Start Setup =====");
 #endif
 
-  // pinMode(SW, INPUT_PULLUP);
+  pinMode(BUTTON_PIN, INPUT);
 
 #if DEBUG_MODE
   SerialUSB.println("----- Setup end -----");
@@ -56,7 +55,20 @@ void firstScene()
 #if DEBUG_MODE
   SerialUSB.println("After Burner");
 #endif
-  after_burner(&engine_strip, 10);
+
+  analogWrite(ENGINE_PIN, 50);
+  delay(300);
+  analogWrite(ENGINE_PIN, 100);
+  delay(300);
+  analogWrite(ENGINE_PIN, 150);
+  delay(300);
+  analogWrite(ENGINE_PIN, 250);
+  delay(1500);
+  analogWrite(ENGINE_PIN, 10);
+  delay(500);
+  analogWrite(ENGINE_PIN, 250);
+  delay(2000);
+  analogWrite(ENGINE_PIN, 10);
 
 #if DEBUG_MODE
   SerialUSB.println("Rainbow");
@@ -64,13 +76,9 @@ void firstScene()
 
   head_strip.begin();
   cockpit_strip.begin();
-  engine_strip.begin();
 
   head_strip.setBrightness(STRIP_BRIGHT);
   cockpit_strip.setBrightness(STRIP_BRIGHT);
-  engine_strip.setBrightness(255);
-
-  engine_normal(&engine_strip, 20);
 
   for(int i = 0; i < 5; i ++) {
     rainbowCycle(&head_strip, 1, true);
@@ -99,37 +107,30 @@ void loop()
   SerialUSB.println("----- Loop start -----");
 #endif
 
-  // if (digitalRead(SW) == 0)
-  // {
-  //   fire = 1;
-  // }
-  // engine_normal(&strip, 20);
+  if (digitalRead(BUTTON_PIN) == 0)
+  {
+    fire = 1;
+
+#if DEBUG_MODE
+    SerialUSB.println("Button Off");
+#endif
+  } else {
+#if DEBUG_MODE
+    SerialUSB.println("Button On");
+#endif
+  }
 
   firstScene();
   delay(1000 * 3);
 
-  // if (fire == 1)
-  // {
-  //   phoenix(&timer, &strip);
-  //   fire = 0;
-  // }
+  if (fire == 1)
+  {
+    fire = 0;
+  }
+
 #if DEBUG_MODE
   SerialUSB.println("----- Loop end -----");
 #endif
 }
 
 //----------------------------------------------------------------------------------
-void phoenix(TimerTC3* timer, Adafruit_NeoPixel* strip)
-{
-  analogWrite(biyoku, 255);
-  after_burner(strip, 10);
-  for (int i = 0; i < 1; i++)
-  {
-    rainbowCycle(strip, 2, true);
-  }
-  colorWipe(strip, strip->Color(0, 0, 0), 50, true);
-  analogWrite(f_side, 0);
-  analogWrite(r_side, 0);
-  analogWrite(biyoku, 0);
-}
-

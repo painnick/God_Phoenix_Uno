@@ -18,17 +18,6 @@ uint32_t Wheel(Adafruit_NeoPixel *strip, byte WheelPos)
 }
 
 //----------------------------------------------------------------------------------
-void engine_normal(Adafruit_NeoPixel *strip, int t)
-{
-  strip->setPixelColor(0, strip->Color(125, 0, 0));
-  strip->setPixelColor(1, strip->Color(0, 250, 250));
-  strip->show();
-  delay(t);
-  strip->setPixelColor(0, strip->Color(50, 0, 0));
-  strip->setPixelColor(1, strip->Color(50, 0, 0));
-  strip->show();
-  delay(t);
-}
 
 void after_burner(Adafruit_NeoPixel *strip, int t)
 {
