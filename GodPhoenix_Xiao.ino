@@ -6,17 +6,17 @@
 #define DEBUG_MODE 1
 
 #if DEBUG_MODE
-  #define STRIP_BRIGHT 5
+#define STRIP_BRIGHT 5
 #else
-  #define STRIP_BRIGHT 250
+#define STRIP_BRIGHT 250
 #endif
 
-#define HEAD_PIN     0 // #1
-#define COCKPIT_PIN  1 // #2
-#define TOP_PIN      2 // #3
+#define HEAD_PIN 0     // #1
+#define COCKPIT_PIN 1  // #2
+#define TOP_PIN 2      // #3
 #define TAILSIDE_PIN 4 // #5
-#define ENGINE_PIN   5 // #6 NOT WORK
-#define BUTTON_PIN   7 // #8
+#define ENGINE_PIN 5   // #6 NOT WORK
+#define BUTTON_PIN 7   // #8
 
 Adafruit_NeoPixel head_strip = Adafruit_NeoPixel(11 * 2, HEAD_PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel cockpit_strip = Adafruit_NeoPixel(7, COCKPIT_PIN, NEO_GRB + NEO_KHZ800);
@@ -80,7 +80,8 @@ void firstScene()
   head_strip.setBrightness(STRIP_BRIGHT);
   cockpit_strip.setBrightness(STRIP_BRIGHT);
 
-  for(int i = 0; i < 5; i ++) {
+  for (int i = 0; i < 5; i++)
+  {
     rainbowCycle(&head_strip, 1, true);
     rainbowCycle(&cockpit_strip, 1, false);
   }
@@ -100,6 +101,10 @@ void firstScene()
   analogWrite(TAILSIDE_PIN, 0);
 }
 
+void normal_form()
+{
+}
+
 //---------------------------------------------------
 void loop()
 {
@@ -114,7 +119,9 @@ void loop()
 #if DEBUG_MODE
     SerialUSB.println("Button Off");
 #endif
-  } else {
+  }
+  else
+  {
 #if DEBUG_MODE
     SerialUSB.println("Button On");
 #endif

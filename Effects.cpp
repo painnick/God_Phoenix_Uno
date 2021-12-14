@@ -43,7 +43,8 @@ void rainbow(Adafruit_NeoPixel *strip, uint8_t wait, bool dual)
     {
       uint32_t wheelColor = Wheel(strip, (pixelIndex + colorIndex) & 255);
       strip->setPixelColor(pixelIndex, wheelColor);
-      if (dual) {
+      if (dual)
+      {
         strip->setPixelColor(numPixels - pixelIndex, wheelColor);
       }
     }
@@ -64,7 +65,8 @@ void rainbowCycle(Adafruit_NeoPixel *strip, uint8_t wait, bool dual)
     {
       uint32_t color = Wheel(strip, ((pixelIndex * 256 / numPixels) + colorIndex) & 255);
       strip->setPixelColor(pixelIndex, color);
-      if (dual) {
+      if (dual)
+      {
         strip->setPixelColor((numPixels * 2 - 1) - pixelIndex, color);
       }
     }
@@ -79,7 +81,8 @@ void colorWipe(Adafruit_NeoPixel *strip, uint32_t color, uint8_t wait, bool dual
   for (uint16_t pixelIndex = 0; pixelIndex < numPixels; pixelIndex++)
   {
     strip->setPixelColor((numPixels - 1) - pixelIndex, color);
-    if (dual) {
+    if (dual)
+    {
       strip->setPixelColor(numPixels + pixelIndex, color);
     }
     strip->show();
