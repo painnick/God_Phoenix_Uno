@@ -15,12 +15,12 @@
 #define STRIP_BRIGHT 250
 #endif
 
-#define HEAD_PIN 0     // #1
-#define COCKPIT_PIN 1  // #2
-#define TOP_PIN 2      // #3
-#define TAILSIDE_PIN 4 // #5
-#define ENGINE_PIN 5   // #6
-#define BUTTON_PIN 7   // #8
+#define HEAD_PIN 0     // #1 기수 앞 부분의 NeoPixel
+#define COCKPIT_PIN 1  // #2 콕핏 부분의 NeoPixel
+#define TOP_PIN 2      // #3 상단의 원형 클리어 안에 심은 LED
+#define TAILSIDE_PIN 4 // #5 엔진 좌우의 클리어 안에 심은 LED
+#define ENGINE_PIN 5   // #6 엔진 클리어 안에 심은 LED
+#define BUTTON_PIN 7   // #8 신호 입력용 버튼 스위치
 
 Adafruit_NeoPixel head_strip = Adafruit_NeoPixel(11 * 2, HEAD_PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel cockpit_strip = Adafruit_NeoPixel(7, COCKPIT_PIN, NEO_GRB + NEO_KHZ800);
@@ -73,6 +73,10 @@ void loop()
 }
 
 //----------------------------------------------------------------------------------
+/**
+ * 노말 모드
+ * NeoPixel은 1가지 색으로 설정하고, 일반 LED의 밝기는 다소 어두운 상태로 켠다
+ **/
 void normal_form()
 {
   analogWrite(TOP_PIN, 50);
@@ -87,6 +91,10 @@ void normal_form()
   colorWipe(&cockpit_strip, normalColor, 10, false);
 }
 
+/**
+ * 피닉스 모드
+ * 레인보우 효과와 함께 일반 LED들의 밝기도 최대로 한다.
+ **/
 void phoenix_form()
 {
   analogWrite(TOP_PIN, 250);

@@ -1,6 +1,8 @@
 #include "Effects.h"
 
-//----------------------------------------------------------------------------------
+/**
+ * 색상 계산
+ **/
 uint32_t Wheel(Adafruit_NeoPixel *strip, byte WheelPos)
 {
   WheelPos = 255 - WheelPos;
@@ -17,8 +19,13 @@ uint32_t Wheel(Adafruit_NeoPixel *strip, byte WheelPos)
   return strip->Color(WheelPos * 3, 255 - WheelPos * 3, 0);
 }
 
-//----------------------------------------------------------------------------------
-
+/**
+ * 엔진 발화 효과
+ * 
+ * engine_pin - 엔진 LED의 핀 번호
+ * side_pin - 엔지 사이드 LED의 핀 번호
+ * keep - 밝기를 유지할지 여부. false인 경우 어둡게 마무리
+ **/
 void after_burner(uint32_t engine_pin, uint32_t side_pin, bool keep)
 {
   analogWrite(side_pin, 250);
@@ -46,6 +53,13 @@ void after_burner(uint32_t engine_pin, uint32_t side_pin, bool keep)
   }
 }
 
+/**
+ * 레인보우 색상 변경 효과
+ * 
+ * strip - NeoPixel
+ * wait - 대기 시간(ms)
+ * dual - 가운데를 기준으로 퍼저나가는지 여부(헤드 부분)
+ **/
 void rainbowCycle(Adafruit_NeoPixel *strip, uint8_t wait, bool dual)
 {
   uint16_t pixelIndex, colorIndex;
@@ -68,6 +82,14 @@ void rainbowCycle(Adafruit_NeoPixel *strip, uint8_t wait, bool dual)
   }
 }
 
+/**
+ * 차례로 색상 변경
+ * 
+ * strip - NeoPixel
+ * color - 적용할 색상
+ * wait - 대기 시간(ms)
+ * dual - 가운데를 기준으로 퍼저나가는지 여부(헤드 부분)
+ **/
 void colorWipe(Adafruit_NeoPixel *strip, uint32_t color, uint8_t wait, bool dual)
 {
   int numPixels = dual ? strip->numPixels() / 2 : strip->numPixels();
