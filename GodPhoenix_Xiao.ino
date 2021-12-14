@@ -34,7 +34,7 @@ void setup()
   SerialUSB.println("===== Start Setup =====");
 #endif
 
-  pinMode(BUTTON_PIN, INPUT);
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
 
   head_strip.begin();
   cockpit_strip.begin();
@@ -44,30 +44,36 @@ void setup()
 #endif
 }
 
+#if DEBUG_MODE
+uint32_t count = 0;
+#endif
 void loop()
 {
 #if DEBUG_MODE
   SerialUSB.println("===== Loop start =====");
 #endif
 
-  if (digitalRead(BUTTON_PIN) == 0)
+  if (digitalRead(BUTTON_PIN) == LOW)
   {
 #if DEBUG_MODE
     SerialUSB.println("Button Off");
+    count = 0;
 #endif
     normal_form();
   }
   else
   {
 #if DEBUG_MODE
-    SerialUSB.println("Button On - Phoenix!!! ");
+    count++;
+    SerialUSB.print("Button On - Phoenix!!! ");
+    SerialUSB.println(count);
 #endif
     phoenix_form();
   }
 
+#if DEBUG_MODE
   delay(1000);
 
-#if DEBUG_MODE
   SerialUSB.println("----- Loop end -----");
 #endif
 }
