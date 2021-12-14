@@ -19,37 +19,30 @@ uint32_t Wheel(Adafruit_NeoPixel *strip, byte WheelPos)
 
 //----------------------------------------------------------------------------------
 
-void after_burner(Adafruit_NeoPixel *strip, int t)
+void after_burner(uint32_t engine_pin, uint32_t side_pin, bool keep)
 {
-  strip->setBrightness(255);
-  for (int i = 0; i < 256; i++)
-  {
-    strip->setPixelColor(0, strip->Color(i, 255 - i, 255 - i));
-    strip->setPixelColor(1, strip->Color(125 + i / 2, i, i));
-    strip->show();
-    delay(t);
-  }
-}
+  analogWrite(side_pin, 250);
 
-void rainbow(Adafruit_NeoPixel *strip, uint8_t wait, bool dual)
-{
-  uint16_t pixelIndex, colorIndex;
+  analogWrite(engine_pin, 50);
+  delay(300);
+  analogWrite(engine_pin, 100);
+  delay(300);
+  analogWrite(engine_pin, 150);
+  delay(300);
+  analogWrite(engine_pin, 250);
+  delay(1500);
+  analogWrite(engine_pin, 10);
+  delay(500);
+  analogWrite(engine_pin, 250);
+  delay(2000);
 
-  int numPixels = dual ? strip->numPixels() / 2 : strip->numPixels();
+  if (keep) {
+    analogWrite(side_pin, 250);
 
-  for (colorIndex = 0; colorIndex < 256; colorIndex++)
-  {
-    for (pixelIndex = 0; pixelIndex < numPixels; pixelIndex++)
-    {
-      uint32_t wheelColor = Wheel(strip, (pixelIndex + colorIndex) & 255);
-      strip->setPixelColor(pixelIndex, wheelColor);
-      if (dual)
-      {
-        strip->setPixelColor(numPixels - pixelIndex, wheelColor);
-      }
-    }
-    strip->show();
-    delay(wait);
+  } else {
+    analogWrite(engine_pin, 10);
+
+    analogWrite(side_pin, 50);
   }
 }
 
