@@ -71,6 +71,9 @@ void loop()
   SerialUSB.println("===== Loop start =====");
 #endif
 
+  dfmp3.loop(); 
+  delay(1);
+
   if (digitalRead(BUTTON_PIN) == LOW)
   {
     if (lastState != LOW) {
