@@ -50,7 +50,11 @@ void setup()
   dfmp3.begin(9600, 1000);
 
   dfmp3.reset();
-  dfmp3.setVolume(15);
+#ifdef _DEBUG
+  dfmp3.setVolume(10);
+#else
+  dfmp3.setVolume(20);
+#endif
   delay(100);
 
 #ifdef _DEBUG
