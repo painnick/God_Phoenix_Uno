@@ -1,5 +1,4 @@
 #include <Adafruit_NeoPixel.h>
-#include <TimerTC3.h>
 
 uint32_t Wheel(Adafruit_NeoPixel *strip, byte WheelPos);
 
