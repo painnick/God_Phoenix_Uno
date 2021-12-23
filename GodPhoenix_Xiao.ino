@@ -158,6 +158,7 @@ class Mp3Notify
 public:
   static void PrintlnSourceAction(DfMp3_PlaySources source, const char* action)
   {
+#ifdef _DEBUG
     if (source & DfMp3_PlaySources_Sd) 
     {
         Serial.print("SD Card, ");
@@ -171,9 +172,11 @@ public:
         Serial.print("Flash, ");
     }
     Serial.println(action);
+#endif
   }
   static void OnError(DfMp3& mp3, uint16_t errorCode)
   {
+#ifdef _DEBUG
     // see DfMp3_Error for code meaning
     Serial.println();
     Serial.print("Com Error ");
@@ -206,14 +209,16 @@ public:
       Serial.println(errorCode, HEX);
       break;
     }
+#endif
   }
   static void OnPlayFinished(DfMp3& mp3, DfMp3_PlaySources source, uint16_t track)
   {
+#ifdef _DEBUG
     Serial.print("Play finished for #");
     Serial.println(track);
 
     Serial.println("Play #1");
-    mp3.playGlobalTrack(0);
+#endif
   }
   static void OnPlaySourceOnline(DfMp3& mp3, DfMp3_PlaySources source)
   {
