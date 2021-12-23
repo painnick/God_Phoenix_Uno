@@ -5,11 +5,13 @@
  * @see https://smile-dental-clinic.info/wordpress/?p=11441
  **/
 #include <Adafruit_NeoPixel.h>
+#include <SoftwareSerial.h>
+#include "DFMiniMp3.h"
 #include "Effects.h"
 
-#define DEBUG_MODE 1
+#define _DEBUG 1
 
-#if DEBUG_MODE
+#ifdef _DEBUG
 #define STRIP_BRIGHT 5
 #else
 #define STRIP_BRIGHT 250
@@ -21,14 +23,21 @@
 #define TAILSIDE_PIN 4 // #5 엔진 좌우의 클리어 안에 심은 LED
 #define ENGINE_PIN 5   // #6 엔진 클리어 안에 심은 LED
 #define BUTTON_PIN 7   // #8 신호 입력용 버튼 스위치
+#define RX_PIN 9
+#define TX_PIN 10
 
 Adafruit_NeoPixel head_strip = Adafruit_NeoPixel(11 * 2, HEAD_PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel cockpit_strip = Adafruit_NeoPixel(7, COCKPIT_PIN, NEO_GRB + NEO_KHZ800);
 
+class Mp3Notify; 
+typedef DFMiniMp3<SoftwareSerial, Mp3Notify> DfMp3; 
+SoftwareSerial mySerial(RX_PIN, TX_PIN);
+DfMp3 dfmp3(mySerial);
+
 //--------------------------------------------------------------------------
 void setup()
 {
-#if DEBUG_MODE
+#ifdef _DEBUG
   SerialUSB.begin(9600);
   delay(1000 * 2);
   SerialUSB.println("===== Start Setup =====");
@@ -38,40 +47,48 @@ void setup()
 
   head_strip.begin();
   cockpit_strip.begin();
+  dfmp3.begin(9600, 1000);
 
-#if DEBUG_MODE
+  dfmp3.reset();
+  dfmp3.setVolume(15);
+  delay(100);
+
+#ifdef _DEBUG
   SerialUSB.println("----- Setup end -----");
 #endif
 }
 
-#if DEBUG_MODE
-uint32_t count = 0;
+#ifdef _DEBUG
+int lastState = -1;
 #endif
 void loop()
 {
-#if DEBUG_MODE
+#ifdef _DEBUG
   SerialUSB.println("===== Loop start =====");
 #endif
 
   if (digitalRead(BUTTON_PIN) == LOW)
   {
-#if DEBUG_MODE
-    SerialUSB.println("Button Off");
-    count = 0;
+    if (lastState != LOW) {
+#ifdef _DEBUG
+      SerialUSB.println("Button Off");
 #endif
-    normal_form();
+      normal_form();
+    }
+    lastState = LOW;
   }
   else
   {
-#if DEBUG_MODE
-    count++;
-    SerialUSB.print("Button On - Phoenix!!! ");
-    SerialUSB.println(count);
+    if (lastState != HIGH) {    
+#ifdef _DEBUG
+      SerialUSB.println("Button On - Phoenix!!!");
 #endif
-    phoenix_form();
+      phoenix_form();
+    }
+    lastState = HIGH;
   }
 
-#if DEBUG_MODE
+#ifdef _DEBUG
   delay(1000);
 
   SerialUSB.println("----- Loop end -----");
@@ -85,6 +102,13 @@ void loop()
  **/
 void normal_form()
 {
+#ifdef _DEBUG
+      SerialUSB.println("Process - Normal");
+#endif
+
+  dfmp3.playGlobalTrack(1);
+  delay(100);
+
   analogWrite(TOP_PIN, 50);
 
   after_burner(ENGINE_PIN, TAILSIDE_PIN, false);
@@ -103,6 +127,13 @@ void normal_form()
  **/
 void phoenix_form()
 {
+#ifdef _DEBUG
+      SerialUSB.println("Process - PHOENIX!");
+#endif
+
+  dfmp3.playGlobalTrack(2);
+  delay(100);
+
   analogWrite(TOP_PIN, 250);
 
   after_burner(ENGINE_PIN, TAILSIDE_PIN, true);
@@ -116,3 +147,80 @@ void phoenix_form()
     rainbowCycle(&cockpit_strip, 1, false);
   }
 }
+
+//----------------------------------------------------------------------------------
+class Mp3Notify
+{
+public:
+  static void PrintlnSourceAction(DfMp3_PlaySources source, const char* action)
+  {
+    if (source & DfMp3_PlaySources_Sd) 
+    {
+        Serial.print("SD Card, ");
+    }
+    if (source & DfMp3_PlaySources_Usb) 
+    {
+        Serial.print("USB Disk, ");
+    }
+    if (source & DfMp3_PlaySources_Flash) 
+    {
+        Serial.print("Flash, ");
+    }
+    Serial.println(action);
+  }
+  static void OnError(DfMp3& mp3, uint16_t errorCode)
+  {
+    // see DfMp3_Error for code meaning
+    Serial.println();
+    Serial.print("Com Error ");
+    switch (errorCode)
+    {
+    case DfMp3_Error_Busy:
+      Serial.println("Busy");
+      break;
+    case DfMp3_Error_Sleeping:
+      Serial.println("Sleeping");
+      break;
+    case DfMp3_Error_SerialWrongStack:
+      Serial.println("Serial Wrong Stack");
+      break;
+
+    case DfMp3_Error_RxTimeout:
+      Serial.println("Rx Timeout!!!");
+      break;
+    case DfMp3_Error_PacketSize:
+      Serial.println("Wrong Packet Size!!!");
+      break;
+    case DfMp3_Error_PacketHeader:
+      Serial.println("Wrong Packet Header!!!");
+      break;
+    case DfMp3_Error_PacketChecksum:
+      Serial.println("Wrong Packet Checksum!!!");
+      break;
+
+    default:
+      Serial.println(errorCode, HEX);
+      break;
+    }
+  }
+  static void OnPlayFinished(DfMp3& mp3, DfMp3_PlaySources source, uint16_t track)
+  {
+    Serial.print("Play finished for #");
+    Serial.println(track);
+
+    Serial.println("Play #1");
+    mp3.playGlobalTrack(0);
+  }
+  static void OnPlaySourceOnline(DfMp3& mp3, DfMp3_PlaySources source)
+  {
+    PrintlnSourceAction(source, "online");
+  }
+  static void OnPlaySourceInserted(DfMp3& mp3, DfMp3_PlaySources source)
+  {
+    PrintlnSourceAction(source, "inserted");
+  }
+  static void OnPlaySourceRemoved(DfMp3& mp3, DfMp3_PlaySources source)
+  {
+    PrintlnSourceAction(source, "removed");
+  }
+};
