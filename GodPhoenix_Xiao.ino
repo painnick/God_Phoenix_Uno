@@ -219,8 +219,6 @@ public:
 #ifdef _DEBUG
     Serial.print("Play finished for #");
     Serial.println(track);
-
-    Serial.println("Play #1");
 #endif
   }
   static void OnPlaySourceOnline(DfMp3& mp3, DfMp3_PlaySources source)
