@@ -24,7 +24,7 @@
 #define TAILSIDE_PIN 4 // #5 엔진 좌우의 클리어 안에 심은 LED
 #define ENGINE_PIN 5   // #6 엔진 클리어 안에 심은 LED
 #define TX_PIN 6
-#define BUTTON_PIN 7   // #8 신호 입력용 버튼 스위치
+#define BUTTON_PIN 8   // #9 신호 입력용 버튼 스위치
 
 Adafruit_NeoPixel head_strip = Adafruit_NeoPixel(11 * 2, HEAD_PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel cockpit_strip = Adafruit_NeoPixel(7, COCKPIT_PIN, NEO_GRB + NEO_KHZ800);
@@ -50,12 +50,6 @@ void setup()
   dfmp3.begin(9600, 1000);
 
   dfmp3.reset();
-#ifdef _DEBUG
-  dfmp3.setVolume(10);
-#else
-  dfmp3.setVolume(20);
-#endif
-  delay(100);
 
 #ifdef _DEBUG
   SerialUSB.println("----- Setup end -----");
@@ -113,6 +107,13 @@ void normal_form()
       SerialUSB.println("Process - Normal");
 #endif
 
+#ifdef _DEBUG
+  dfmp3.setVolume(10);
+#else
+  dfmp3.setVolume(20);
+#endif
+  delay(100);
+
   dfmp3.playGlobalTrack(1);
   delay(100);
 
@@ -137,6 +138,13 @@ void phoenix_form()
 #ifdef _DEBUG
       SerialUSB.println("Process - PHOENIX!");
 #endif
+
+#ifdef _DEBUG
+  dfmp3.setVolume(10);
+#else
+  dfmp3.setVolume(20);
+#endif
+  delay(100);
 
   dfmp3.playGlobalTrack(2);
   delay(100);
