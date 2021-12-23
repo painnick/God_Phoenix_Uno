@@ -20,11 +20,11 @@
 #define HEAD_PIN 0     // #1 기수 앞 부분의 NeoPixel
 #define COCKPIT_PIN 1  // #2 콕핏 부분의 NeoPixel
 #define TOP_PIN 2      // #3 상단의 원형 클리어 안에 심은 LED
+#define RX_PIN 3
 #define TAILSIDE_PIN 4 // #5 엔진 좌우의 클리어 안에 심은 LED
 #define ENGINE_PIN 5   // #6 엔진 클리어 안에 심은 LED
+#define TX_PIN 6
 #define BUTTON_PIN 7   // #8 신호 입력용 버튼 스위치
-#define RX_PIN 9
-#define TX_PIN 10
 
 Adafruit_NeoPixel head_strip = Adafruit_NeoPixel(11 * 2, HEAD_PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel cockpit_strip = Adafruit_NeoPixel(7, COCKPIT_PIN, NEO_GRB + NEO_KHZ800);
