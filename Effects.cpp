@@ -92,7 +92,7 @@ void rainbowCycle(Adafruit_NeoPixel *strip, uint8_t wait, bool dual)
  * wait - 대기 시간(ms)
  * dual - 가운데를 기준으로 퍼저나가는지 여부(헤드 부분)
  **/
-void colorWipe(Adafruit_NeoPixel *strip, uint32_t color, uint8_t wait, bool dual, COLOR_WIPE_TYPE type)
+void colorWipe(Adafruit_NeoPixel *strip, uint32_t color, uint8_t wait, bool dual, COLOR_FILL_TYPE type)
 {
   int numPixels = dual ? strip->numPixels() / 2 : strip->numPixels();
   for (uint16_t pixelIndex = 0; pixelIndex < numPixels; pixelIndex++)
@@ -101,13 +101,13 @@ void colorWipe(Adafruit_NeoPixel *strip, uint32_t color, uint8_t wait, bool dual
 
     switch (type)
     {
-    case COLOR_WIPE_TYPE::ALL:
+    case COLOR_FILL_TYPE::ALL:
       isSet = true;
       break;
-    case COLOR_WIPE_TYPE::ODD:
+    case COLOR_FILL_TYPE::ODD:
       isSet = (pixelIndex % 2) == 1;
       break;
-    case COLOR_WIPE_TYPE::EVEN:
+    case COLOR_FILL_TYPE::EVEN:
       isSet = (pixelIndex % 2) == 0;
       break;
     default:

@@ -194,17 +194,17 @@ void normal_form(int &step)
   case 2:
     for (int i = 0; i < 6; i++)
     {
-      COLOR_WIPE_TYPE targetType = COLOR_WIPE_TYPE::ALL;
-      COLOR_WIPE_TYPE blackType = COLOR_WIPE_TYPE::ALL;
+      COLOR_FILL_TYPE targetType = COLOR_FILL_TYPE::ALL;
+      COLOR_FILL_TYPE blackType = COLOR_FILL_TYPE::ALL;
       switch (i % 2)
       {
       case 0:
-        targetType = COLOR_WIPE_TYPE::ODD;
-        blackType = COLOR_WIPE_TYPE::EVEN;
+        targetType = COLOR_FILL_TYPE::ODD;
+        blackType = COLOR_FILL_TYPE::EVEN;
         break;
       case 1:
-        targetType = COLOR_WIPE_TYPE::EVEN;
-        blackType = COLOR_WIPE_TYPE::ODD;
+        targetType = COLOR_FILL_TYPE::EVEN;
+        blackType = COLOR_FILL_TYPE::ODD;
         break;
       }
 
@@ -219,13 +219,13 @@ void normal_form(int &step)
     }
 
     // Screen Off
-    colorWipe(&head_strip, COLOR_BLACK, 1, true, COLOR_WIPE_TYPE::ALL);
-    colorWipe(&cockpit_strip, COLOR_BLACK, 1, false, COLOR_WIPE_TYPE::ALL);
+    colorWipe(&head_strip, COLOR_BLACK, 1, true, COLOR_FILL_TYPE::ALL);
+    colorWipe(&cockpit_strip, COLOR_BLACK, 1, false, COLOR_FILL_TYPE::ALL);
 
     waitMilliseconds(200);
 
-    colorWipe(&head_strip, normalColor, 1, true, COLOR_WIPE_TYPE::ALL);
-    colorWipe(&cockpit_strip, normalColor, 1, false, COLOR_WIPE_TYPE::ALL);
+    colorWipe(&head_strip, normalColor, 1, true, COLOR_FILL_TYPE::ALL);
+    colorWipe(&cockpit_strip, normalColor, 1, false, COLOR_FILL_TYPE::ALL);
 
     break;
   case 3:
@@ -234,13 +234,13 @@ void normal_form(int &step)
     break;
   case 5:
     // Screen Off
-    colorWipe(&head_strip, COLOR_BLACK, 1, true, COLOR_WIPE_TYPE::ALL);
-    colorWipe(&cockpit_strip, COLOR_BLACK, 1, false, COLOR_WIPE_TYPE::ALL);
+    colorWipe(&head_strip, COLOR_BLACK, 1, true, COLOR_FILL_TYPE::ALL);
+    colorWipe(&cockpit_strip, COLOR_BLACK, 1, false, COLOR_FILL_TYPE::ALL);
 
     waitMilliseconds(200);
 
-    colorWipe(&head_strip, normalColor, 1, true, COLOR_WIPE_TYPE::ALL);
-    colorWipe(&cockpit_strip, normalColor, 1, false, COLOR_WIPE_TYPE::ALL);
+    colorWipe(&head_strip, normalColor, 1, true, COLOR_FILL_TYPE::ALL);
+    colorWipe(&cockpit_strip, normalColor, 1, false, COLOR_FILL_TYPE::ALL);
     break;
   case 6:
     analogWrite(TOP_PIN, 0);
