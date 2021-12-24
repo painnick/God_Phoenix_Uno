@@ -30,6 +30,7 @@
 
 #define COLOR_BLACK 0x0
 
+uint32_t normalColor = 0x0000;
 Adafruit_NeoPixel head_strip = Adafruit_NeoPixel(11 * 2, HEAD_PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel cockpit_strip = Adafruit_NeoPixel(7, COCKPIT_PIN, NEO_GRB + NEO_KHZ800);
 
@@ -54,6 +55,9 @@ void setup()
   dfmp3.begin(9600, 1000);
 
   dfmp3.reset();
+
+  normalColor = head_strip.Color(255, 140, 0);
+  // normalColor = head_strip.Color(random(63, 191), random(63, 191), random(63, 191));
 
 #ifdef _DEBUG
   Serial.println("----- Setup end -----");
@@ -147,7 +151,6 @@ void waitMilliseconds(uint16_t msWait)
 /**
  * 노말 모드
  **/
-uint32_t normalColor = 0x0000;
 void normal_form(int &step)
 {
   switch (step)
@@ -156,6 +159,12 @@ void normal_form(int &step)
 #ifdef _DEBUG
     Serial.println("Process - Normal");
 #endif
+
+    head_strip.setBrightness(STRIP_BRIGHT);
+    cockpit_strip.setBrightness(STRIP_BRIGHT);
+
+    colorWipe(&head_strip, normalColor, 1, true);
+    colorWipe(&cockpit_strip, normalColor, 1, false);
 
     dfmp3.setVolume(VOLUME);
     waitMilliseconds(100);
@@ -170,9 +179,6 @@ void normal_form(int &step)
 
     head_strip.setBrightness(STRIP_BRIGHT);
     cockpit_strip.setBrightness(STRIP_BRIGHT);
-
-    normalColor = head_strip.Color(255, 140, 0);
-    // normalColor = head_strip.Color(random(63, 191), random(63, 191), random(63, 191));
 
     // 3번 깜박임. 종료 시점에 불이 켜져 있는 상태
     for (int i = 0; i < 6; i++)
@@ -268,6 +274,12 @@ void phoenix_form(int &step)
     Serial.println("Process - PHOENIX!");
 #endif
 
+    head_strip.setBrightness(STRIP_BRIGHT);
+    cockpit_strip.setBrightness(STRIP_BRIGHT);
+
+    colorWipe(&head_strip, normalColor, 1, true);
+    colorWipe(&cockpit_strip, normalColor, 1, false);
+
     dfmp3.setVolume(VOLUME);
     waitMilliseconds(100);
 
@@ -290,6 +302,11 @@ void phoenix_form(int &step)
     }
     break;
   case 3:
+    for (int i = 0; i < 3; i++)
+    {
+      blink(&head_strip, &cockpit_strip, 200);
+      waitMilliseconds(200);
+    }
     break;
   default:
     step = 0;

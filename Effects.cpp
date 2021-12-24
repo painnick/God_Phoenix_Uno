@@ -126,3 +126,37 @@ void colorWipe(Adafruit_NeoPixel *strip, uint32_t color, uint8_t wait, bool dual
     }
   }
 }
+
+void blink(Adafruit_NeoPixel *strip1, Adafruit_NeoPixel *strip2, uint8_t wait)
+{
+  uint32_t colors1[16];
+  uint32_t colors2[16];
+
+  for (int i = 0; i < strip1->numPixels(); i++)
+  {
+    colors1[i] = strip1->getPixelColor(i);
+    strip1->setPixelColor(i, 0);
+  }
+  for (int i = 0; i < strip2->numPixels(); i++)
+  {
+    colors2[i] = strip2->getPixelColor(i);
+    strip2->setPixelColor(i, 0);
+  }
+
+  strip1->show();
+  strip2->show();
+
+  delay(wait);
+
+  for (int i = 0; i < strip1->numPixels(); i++)
+  {
+    strip1->setPixelColor(i, colors1[i]);
+  }
+  for (int i = 0; i < strip2->numPixels(); i++)
+  {
+    strip2->setPixelColor(i, colors2[i]);
+  }
+  
+  strip1->show();
+  strip2->show();
+}
