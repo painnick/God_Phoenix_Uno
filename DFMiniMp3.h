@@ -464,25 +464,6 @@ public:
         return _isOnline;
     }
 
-    void sendPacketVol15()
-    {
-        uint8_t packet[10];
-        packet[0] = 0x7E;
-        packet[1] = 0xFF;
-        packet[2] = 0x06;
-        packet[3] = 0x06;
-        packet[4] = 0x00;
-        packet[5] = 0x00;
-        packet[6] = 0x0F;
-        packet[7] = 0xFF;
-        packet[8] = 0xD5;
-        packet[9] = 0xEF;
-        
-        _serial.write(packet, 10);
-
-        _lastSend = millis();
-    }
-
 private:
     static const uint16_t c_msSendSpace = 50;
 
