@@ -120,7 +120,7 @@ void loop()
     normalStep++;
     break;
   case PROCESSOR_PHOENIX:
-    // @TODO.
+    phoenix_form(phoenixStep);
     phoenixStep++;
     break;
 
@@ -259,29 +259,41 @@ void normal_form(int &step)
  * 피닉스 모드
  * 레인보우 효과와 함께 일반 LED들의 밝기도 최대로 한다.
  **/
-void phoenix_form()
+void phoenix_form(int &step)
 {
+  switch (step)
+  {
+  case 0:
 #ifdef _DEBUG
-  Serial.println("Process - PHOENIX!");
+    Serial.println("Process - PHOENIX!");
 #endif
 
-  dfmp3.setVolume(VOLUME);
-  delay(100);
+    dfmp3.setVolume(VOLUME);
+    waitMilliseconds(100);
 
-  dfmp3.playFolderTrack16(2, 1);
-  delay(100);
+    dfmp3.playFolderTrack16(2, 1);
+    waitMilliseconds(100);
+    break;
+  case 1:
+    analogWrite(TOP_PIN, 250);
 
-  analogWrite(TOP_PIN, 250);
+    after_burner(ENGINE_PIN, TAILSIDE_PIN, true);
+    break;
+  case 2:
+    head_strip.setBrightness(STRIP_BRIGHT);
+    cockpit_strip.setBrightness(STRIP_BRIGHT);
 
-  after_burner(ENGINE_PIN, TAILSIDE_PIN, true);
-
-  head_strip.setBrightness(STRIP_BRIGHT);
-  cockpit_strip.setBrightness(STRIP_BRIGHT);
-
-  for (int i = 0; i < 5; i++)
-  {
-    rainbowCycle(&head_strip, 1, true);
-    rainbowCycle(&cockpit_strip, 1, false);
+    for (int i = 0; i < 5; i++)
+    {
+      rainbowCycle(&head_strip, 1, true);
+      rainbowCycle(&cockpit_strip, 1, false);
+    }
+    break;
+  case 3:
+    break;
+  default:
+    step = 0;
+    break;
   }
 }
 
