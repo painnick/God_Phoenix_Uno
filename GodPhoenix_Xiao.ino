@@ -38,9 +38,9 @@ DfMp3 dfmp3(mySerial);
 void setup()
 {
 #ifdef _DEBUG
-  SerialUSB.begin(9600);
+  Serial.begin(9600);
   delay(1000 * 2);
-  SerialUSB.println("===== Start Setup =====");
+  Serial.println("===== Start Setup =====");
 #endif
 
   pinMode(BUTTON_PIN, INPUT_PULLUP);
@@ -52,7 +52,7 @@ void setup()
   dfmp3.reset();
 
 #ifdef _DEBUG
-  SerialUSB.println("----- Setup end -----");
+  Serial.println("----- Setup end -----");
 #endif
 }
 
@@ -61,9 +61,9 @@ int lastState = -1;
 #endif
 void loop()
 {
-#ifdef _DEBUG
-  SerialUSB.println("===== Loop start =====");
-#endif
+// #ifdef _DEBUG
+//   Serial.println("===== Loop start =====");
+// #endif
 
   dfmp3.loop(); 
   delay(1);
@@ -72,7 +72,7 @@ void loop()
   {
     if (lastState != LOW) {
 #ifdef _DEBUG
-      SerialUSB.println("Button Off");
+      Serial.println("Button Off");
 #endif
       normal_form();
     }
@@ -82,18 +82,18 @@ void loop()
   {
     if (lastState != HIGH) {    
 #ifdef _DEBUG
-      SerialUSB.println("Button On - Phoenix!!!");
+      Serial.println("Button On - Phoenix!!!");
 #endif
       phoenix_form();
     }
     lastState = HIGH;
   }
 
-#ifdef _DEBUG
-  delay(1000);
+// #ifdef _DEBUG
+//   delay(1000);
 
-  SerialUSB.println("----- Loop end -----");
-#endif
+//   Serial.println("----- Loop end -----");
+// #endif
 }
 
 //----------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ void loop()
 void normal_form()
 {
 #ifdef _DEBUG
-      SerialUSB.println("Process - Normal");
+      Serial.println("Process - Normal");
 #endif
 
 #ifdef _DEBUG
@@ -114,7 +114,7 @@ void normal_form()
 #endif
   delay(100);
 
-  dfmp3.playGlobalTrack(1);
+  dfmp3.playFolderTrack16(1, 1);
   delay(100);
 
   analogWrite(TOP_PIN, 50);
@@ -136,7 +136,7 @@ void normal_form()
 void phoenix_form()
 {
 #ifdef _DEBUG
-      SerialUSB.println("Process - PHOENIX!");
+      Serial.println("Process - PHOENIX!");
 #endif
 
 #ifdef _DEBUG
@@ -146,7 +146,7 @@ void phoenix_form()
 #endif
   delay(100);
 
-  dfmp3.playGlobalTrack(2);
+  dfmp3.playFolderTrack16(2, 1);
   delay(100);
 
   analogWrite(TOP_PIN, 250);
