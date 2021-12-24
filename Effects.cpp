@@ -21,7 +21,7 @@ uint32_t Wheel(Adafruit_NeoPixel *strip, byte WheelPos)
 
 /**
  * 엔진 발화 효과
- * 
+ *
  * engine_pin - 엔진 LED의 핀 번호
  * side_pin - 엔지 사이드 LED의 핀 번호
  * keep - 밝기를 유지할지 여부. false인 경우 어둡게 마무리
@@ -43,10 +43,12 @@ void after_burner(uint32_t engine_pin, uint32_t side_pin, bool keep)
   analogWrite(engine_pin, 250);
   delay(2000);
 
-  if (keep) {
+  if (keep)
+  {
     analogWrite(side_pin, 250);
-
-  } else {
+  }
+  else
+  {
     analogWrite(engine_pin, 10);
 
     analogWrite(side_pin, 50);
@@ -55,7 +57,7 @@ void after_burner(uint32_t engine_pin, uint32_t side_pin, bool keep)
 
 /**
  * 레인보우 색상 변경 효과
- * 
+ *
  * strip - NeoPixel
  * wait - 대기 시간(ms)
  * dual - 가운데를 기준으로 퍼저나가는지 여부(헤드 부분)
@@ -84,23 +86,43 @@ void rainbowCycle(Adafruit_NeoPixel *strip, uint8_t wait, bool dual)
 
 /**
  * 차례로 색상 변경
- * 
+ *
  * strip - NeoPixel
  * color - 적용할 색상
  * wait - 대기 시간(ms)
  * dual - 가운데를 기준으로 퍼저나가는지 여부(헤드 부분)
  **/
-void colorWipe(Adafruit_NeoPixel *strip, uint32_t color, uint8_t wait, bool dual)
+void colorWipe(Adafruit_NeoPixel *strip, uint32_t color, uint8_t wait, bool dual, COLOR_WIPE_TYPE type)
 {
   int numPixels = dual ? strip->numPixels() / 2 : strip->numPixels();
   for (uint16_t pixelIndex = 0; pixelIndex < numPixels; pixelIndex++)
   {
-    strip->setPixelColor((numPixels - 1) - pixelIndex, color);
-    if (dual)
+    bool isSet = false;
+
+    switch (type)
     {
-      strip->setPixelColor(numPixels + pixelIndex, color);
+    case COLOR_WIPE_TYPE::ALL:
+      isSet = true;
+      break;
+    case COLOR_WIPE_TYPE::ODD:
+      isSet = (pixelIndex % 2) == 1;
+      break;
+    case COLOR_WIPE_TYPE::EVEN:
+      isSet = (pixelIndex % 2) == 0;
+      break;
+    default:
+      break;
     }
-    strip->show();
-    delay(wait);
+
+    if (isSet)
+    {
+      strip->setPixelColor((numPixels - 1) - pixelIndex, color);
+      if (dual)
+      {
+        strip->setPixelColor(numPixels + pixelIndex, color);
+      }
+      strip->show();
+      delay(wait);
+    }
   }
 }
