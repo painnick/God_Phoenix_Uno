@@ -49,10 +49,14 @@ void after_burner(uint32_t engine_pin, uint32_t side_pin, bool keep)
   }
   else
   {
-    analogWrite(engine_pin, 10);
-
-    analogWrite(side_pin, 50);
+    normal_engine(engine_pin, side_pin);
   }
+}
+
+void normal_engine(uint32_t engine_pin, uint32_t side_pin)
+{
+  analogWrite(engine_pin, 10);
+  analogWrite(side_pin, 50);
 }
 
 /**
@@ -156,7 +160,7 @@ void blink(Adafruit_NeoPixel *strip1, Adafruit_NeoPixel *strip2, uint8_t wait)
   {
     strip2->setPixelColor(i, colors2[i]);
   }
-  
+
   strip1->show();
   strip2->show();
 }

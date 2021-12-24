@@ -19,9 +19,9 @@
 #define VOLUME 20
 #endif
 
-#define HEAD_PIN 0    // #1 기수 앞 부분의 NeoPixel
-#define COCKPIT_PIN 1 // #2 콕핏 부분의 NeoPixel
-#define TOP_PIN 2     // #3 상단의 원형 클리어 안에 심은 LED
+#define HEAD_PIN 0     // #1 기수 앞 부분의 NeoPixel
+#define COCKPIT_PIN 1  // #2 콕핏 부분의 NeoPixel
+#define TOP_PIN 2      // #3 상단의 원형 클리어 안에 심은 LED
 #define TAILSIDE_PIN 4 // #5 엔진 좌우의 클리어 안에 심은 LED
 #define ENGINE_PIN 5   // #6 엔진 클리어 안에 심은 LED
 #define TX_PIN 6
@@ -64,12 +64,18 @@ void setup()
 #endif
 }
 
-#define PROCESSOR_NORMAL 0
-#define PROCESSOR_PHOENIX 1
+enum PROCESSOR
+{
+  PROCESSOR_NORMAL = 0,
+  PROCESSOR_PHOENIX,
+  PROCESSOR_NOSONG
+};
 
-int processor = -1;
+PROCESSOR processor = PROCESSOR::PROCESSOR_NOSONG;
+int oldState = -1;
 int normalStep = -1;
 int phoenixStep = -1;
+int nosongStep = -1;
 void loop()
 {
   waitMilliseconds(500);
@@ -77,60 +83,67 @@ void loop()
   int newState = digitalRead(BUTTON_PIN);
   switch (processor)
   {
-  case PROCESSOR_NORMAL: // == LOW
+  case PROCESSOR::PROCESSOR_NORMAL: // == LOW
     if (newState == HIGH)
     {
 #ifdef _DEBUG
       Serial.println("Button On");
 #endif
-      processor = PROCESSOR_PHOENIX;
+      processor = PROCESSOR::PROCESSOR_PHOENIX;
       phoenixStep = 0;
     }
     break;
-  case PROCESSOR_PHOENIX: // == HIGH
+  case PROCESSOR::PROCESSOR_PHOENIX: // == HIGH
     if (newState == LOW)
     {
 #ifdef _DEBUG
       Serial.println("Button Off");
 #endif
-      processor = PROCESSOR_NORMAL;
+      processor = PROCESSOR::PROCESSOR_NORMAL;
       normalStep = 0;
     }
     break;
   default:
-    if (newState == LOW)
+    if (newState != oldState)
     {
+      if (newState == LOW)
+      {
 #ifdef _DEBUG
-      Serial.println("Button Off(First)");
+        Serial.println("Button Off(First)");
 #endif
-      processor = PROCESSOR_NORMAL;
-      normalStep = 0;
-    }
-    else
-    {
+        processor = PROCESSOR::PROCESSOR_NORMAL;
+        normalStep = 0;
+      }
+      else
+      {
 #ifdef _DEBUG
-      Serial.println("Button On(First)");
+        Serial.println("Button On(First)");
 #endif
-      processor = PROCESSOR_PHOENIX;
-      phoenixStep = 0;
+        processor = PROCESSOR::PROCESSOR_PHOENIX;
+        phoenixStep = 0;
+      }
     }
     break;
   }
 
   switch (processor)
   {
-  case PROCESSOR_NORMAL:
+  case PROCESSOR::PROCESSOR_NORMAL:
     normal_form(normalStep);
     normalStep++;
     break;
-  case PROCESSOR_PHOENIX:
+  case PROCESSOR::PROCESSOR_PHOENIX:
     phoenix_form(phoenixStep);
     phoenixStep++;
     break;
-
+  case PROCESSOR::PROCESSOR_NOSONG:
+    no_song_form(nosongStep);
+    nosongStep++;
   default:
     break;
   }
+
+  oldState = newState;
 }
 
 void waitMilliseconds(uint16_t msWait)
@@ -172,9 +185,11 @@ void normal_form(int &step)
     dfmp3.playFolderTrack16(1, 1);
     waitMilliseconds(100);
 
+    analogWrite(TOP_PIN, 50);
+    normal_engine(ENGINE_PIN, TAILSIDE_PIN);
+
     break;
   case 1:
-    analogWrite(TOP_PIN, 50);
     after_burner(ENGINE_PIN, TAILSIDE_PIN, false);
 
     head_strip.setBrightness(STRIP_BRIGHT);
@@ -285,10 +300,12 @@ void phoenix_form(int &step)
 
     dfmp3.playFolderTrack16(2, 1);
     waitMilliseconds(100);
+
+    analogWrite(TOP_PIN, 50);
+    normal_engine(ENGINE_PIN, TAILSIDE_PIN);
     break;
   case 1:
     analogWrite(TOP_PIN, 250);
-
     after_burner(ENGINE_PIN, TAILSIDE_PIN, true);
     break;
   case 2:
@@ -308,6 +325,37 @@ void phoenix_form(int &step)
       waitMilliseconds(200);
     }
     break;
+  default:
+    step = 0;
+    break;
+  }
+}
+
+void no_song_form(int &step)
+{
+  switch (step)
+  {
+  case 0:
+    head_strip.setBrightness(STRIP_BRIGHT);
+    cockpit_strip.setBrightness(STRIP_BRIGHT);
+
+    colorWipe(&head_strip, normalColor, 1, true);
+    colorWipe(&cockpit_strip, normalColor, 1, false);
+
+    analogWrite(TOP_PIN, 50);
+    normal_engine(ENGINE_PIN, TAILSIDE_PIN);
+    break;
+  case 1:
+    colorWipe(&head_strip, COLOR_BLACK, 1, true);
+    colorWipe(&cockpit_strip, COLOR_BLACK, 1, false);
+
+    waitMilliseconds(200);
+
+    colorWipe(&head_strip, normalColor, 30, true);
+    colorWipe(&cockpit_strip, normalColor, 30, false);
+    break;
+  case 2:
+  case 3:
   default:
     step = 0;
     break;
@@ -379,6 +427,7 @@ public:
     Serial.print("Play finished for #");
     Serial.println(track);
 #endif
+    processor = PROCESSOR::PROCESSOR_NOSONG;
   }
   static void OnPlaySourceOnline(DfMp3 &mp3, DfMp3_PlaySources source)
   {
