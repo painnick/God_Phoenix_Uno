@@ -12,10 +12,12 @@
 #define _DEBUG 1
 
 #ifdef _DEBUG
-#define STRIP_BRIGHT 10
+#define STRIP_BRIGHT_NORMAL 10
+#define STRIP_BRIGHT_HIGH 50
 #define VOLUME 10
 #else
-#define STRIP_BRIGHT 250
+#define STRIP_BRIGHT_NORMAL 100
+#define STRIP_BRIGHT_HIGH 250
 #define VOLUME 20
 #endif
 
@@ -173,8 +175,8 @@ void normal_form(int &step)
     Serial.println("Process - Normal");
 #endif
 
-    head_strip.setBrightness(STRIP_BRIGHT);
-    cockpit_strip.setBrightness(STRIP_BRIGHT);
+    head_strip.setBrightness(STRIP_BRIGHT_NORMAL);
+    cockpit_strip.setBrightness(STRIP_BRIGHT_NORMAL);
 
     colorWipe(&head_strip, normalColor, 1, true);
     colorWipe(&cockpit_strip, normalColor, 1, false);
@@ -185,15 +187,15 @@ void normal_form(int &step)
     dfmp3.playFolderTrack16(1, 1);
     waitMilliseconds(100);
 
-    analogWrite(TOP_PIN, 50);
+    analogWrite(TOP_PIN, 100);
     normal_engine(ENGINE_PIN, TAILSIDE_PIN);
 
     break;
   case 1:
     after_burner(ENGINE_PIN, TAILSIDE_PIN, false);
 
-    head_strip.setBrightness(STRIP_BRIGHT);
-    cockpit_strip.setBrightness(STRIP_BRIGHT);
+    head_strip.setBrightness(STRIP_BRIGHT_NORMAL);
+    cockpit_strip.setBrightness(STRIP_BRIGHT_NORMAL);
 
     // 3번 깜박임. 종료 시점에 불이 켜져 있는 상태
     for (int i = 0; i < 6; i++)
@@ -289,8 +291,8 @@ void phoenix_form(int &step)
     Serial.println("Process - PHOENIX!");
 #endif
 
-    head_strip.setBrightness(STRIP_BRIGHT);
-    cockpit_strip.setBrightness(STRIP_BRIGHT);
+    head_strip.setBrightness(STRIP_BRIGHT_HIGH);
+    cockpit_strip.setBrightness(STRIP_BRIGHT_HIGH);
 
     colorWipe(&head_strip, normalColor, 1, true);
     colorWipe(&cockpit_strip, normalColor, 1, false);
@@ -301,7 +303,7 @@ void phoenix_form(int &step)
     dfmp3.playFolderTrack16(2, 1);
     waitMilliseconds(100);
 
-    analogWrite(TOP_PIN, 50);
+    analogWrite(TOP_PIN, 250);
     normal_engine(ENGINE_PIN, TAILSIDE_PIN);
     break;
   case 1:
@@ -309,8 +311,8 @@ void phoenix_form(int &step)
     after_burner(ENGINE_PIN, TAILSIDE_PIN, true);
     break;
   case 2:
-    head_strip.setBrightness(STRIP_BRIGHT);
-    cockpit_strip.setBrightness(STRIP_BRIGHT);
+    head_strip.setBrightness(STRIP_BRIGHT_NORMAL);
+    cockpit_strip.setBrightness(STRIP_BRIGHT_NORMAL);
 
     for (int i = 0; i < 5; i++)
     {
@@ -336,8 +338,8 @@ void no_song_form(int &step)
   switch (step)
   {
   case 0:
-    head_strip.setBrightness(STRIP_BRIGHT);
-    cockpit_strip.setBrightness(STRIP_BRIGHT);
+    head_strip.setBrightness(STRIP_BRIGHT_NORMAL);
+    cockpit_strip.setBrightness(STRIP_BRIGHT_NORMAL);
 
     colorWipe(&head_strip, normalColor, 1, true);
     colorWipe(&cockpit_strip, normalColor, 1, false);
