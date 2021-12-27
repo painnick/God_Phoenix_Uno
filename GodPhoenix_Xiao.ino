@@ -50,7 +50,7 @@ void setup()
   Serial.println("===== Start Setup =====");
 #endif
 
-  pinMode(BUTTON_PIN, INPUT_PULLUP);
+  pinMode(BUTTON_PIN, INPUT);
 
   head_strip.begin();
   cockpit_strip.begin();
@@ -82,7 +82,7 @@ void loop()
 {
   waitMilliseconds(500);
 
-  int newState = digitalRead(BUTTON_PIN);
+  int newState = analogRead(BUTTON_PIN) > 50 ? HIGH : LOW;
   switch (processor)
   {
   case PROCESSOR::PROCESSOR_NORMAL: // == LOW
