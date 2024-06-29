@@ -25,8 +25,9 @@
 #define HEAD_PIN 0      // #1 기수 앞 부분의 NeoPixel
 #define COCKPIT_PIN 1   // #2 콕핏 부분의 NeoPixel
 #define TOP_PIN 2       // #3 상단의 원형 클리어 안에 심은 LED
-#define TAILSIDE_PIN 4  // #5 엔진 좌우의 클리어 안에 심은 LED
-#define ENGINE_PIN 5    // #6 엔진 클리어 안에 심은 LED
+#define TAILSIDE_PIN 3  // #4 엔진 좌우의 클리어 안에 심은 LED
+#define ENGINE1_PIN 4   // #5 엔진 클리어 안에 심은 LED
+#define ENGINE2_PIN 5   // #6 엔진 클리어 안에 심은 LED
 #define TX_PIN 6
 #define RX_PIN 7
 #define BUTTON_PIN 8  // #9 신호 입력용 버튼 스위치
@@ -86,13 +87,6 @@ void loop() {
   waitMilliseconds(500);
 
   int newState = digitalRead(BUTTON_PIN) == HIGH ? LOW : HIGH;
-#ifdef _DEBUG
-  if (newState == HIGH) {
-    Serial.println("Button Click!");
-  } else {
-    Serial.println("Button...");
-  }
-#endif
 
   switch (processor) {
     case PROCESSOR::PROCESSOR_NORMAL:  // == LOW
@@ -187,11 +181,11 @@ void normal_form(int &step) {
       waitMilliseconds(100);
 
       analogWrite(TOP_PIN, 100);
-      normal_engine(ENGINE_PIN, TAILSIDE_PIN);
+      normal_engine(ENGINE1_PIN, ENGINE2_PIN, TAILSIDE_PIN);
 
       break;
     case 1:
-      after_burner(ENGINE_PIN, TAILSIDE_PIN, false);
+      after_burner(ENGINE1_PIN, ENGINE2_PIN, TAILSIDE_PIN, false);
 
       head_strip.setBrightness(STRIP_BRIGHT_NORMAL);
       cockpit_strip.setBrightness(STRIP_BRIGHT_NORMAL);
@@ -295,11 +289,11 @@ void phoenix_form(int &step) {
       waitMilliseconds(100);
 
       analogWrite(TOP_PIN, 250);
-      normal_engine(ENGINE_PIN, TAILSIDE_PIN);
+      normal_engine(ENGINE1_PIN, ENGINE2_PIN, TAILSIDE_PIN);
       break;
     case 1:
       analogWrite(TOP_PIN, 250);
-      after_burner(ENGINE_PIN, TAILSIDE_PIN, true);
+      after_burner(ENGINE1_PIN, ENGINE2_PIN, TAILSIDE_PIN, true);
       break;
     case 2:
       head_strip.setBrightness(STRIP_BRIGHT_NORMAL);
@@ -332,7 +326,7 @@ void no_song_form(int &step) {
       colorWipe(&cockpit_strip, normalColor, 1, false);
 
       analogWrite(TOP_PIN, 50);
-      normal_engine(ENGINE_PIN, TAILSIDE_PIN);
+      normal_engine(ENGINE1_PIN, ENGINE2_PIN, TAILSIDE_PIN);
       break;
     case 1:
       colorWipe(&head_strip, COLOR_BLACK, 1, true);

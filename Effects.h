@@ -12,6 +12,6 @@ void rainbow(Adafruit_NeoPixel *strip, uint8_t wait, bool dual);
 void rainbowCycle(Adafruit_NeoPixel *strip, uint8_t wait, bool dual);
 void colorWipe(Adafruit_NeoPixel *strip, uint32_t c, uint8_t wait, bool dual, COLOR_FILL_TYPE type = COLOR_FILL_TYPE::ALL);
 
-void after_burner(uint32_t engine_pin, uint32_t side_pin, bool keep);
-void normal_engine(uint32_t engine_pin, uint32_t side_pin);
+void after_burner(uint32_t engine1_pin, uint32_t engine2_pin, uint32_t side_pin, bool keep);
+void normal_engine(uint32_t engine1_pin, uint32_t engine2_pin, uint32_t side_pin);
 void blink(Adafruit_NeoPixel *strip1, Adafruit_NeoPixel *strip2, uint8_t wait);
