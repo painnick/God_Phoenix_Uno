@@ -26,27 +26,21 @@ uint32_t Wheel(Adafruit_NeoPixel *strip, byte WheelPos)
  * side_pin - 엔지 사이드 LED의 핀 번호
  * keep - 밝기를 유지할지 여부. false인 경우 어둡게 마무리
  **/
-void after_burner(uint32_t engine1_pin, uint32_t engine2_pin, uint32_t side_pin, bool keep)
+void after_burner(uint32_t engine_pin, uint32_t side_pin, bool keep)
 {
   analogWrite(side_pin, 250);
 
-  analogWrite(engine1_pin, 50);
-  analogWrite(engine2_pin, 50);
+  analogWrite(engine_pin, 50);
   delay(300);
-  analogWrite(engine1_pin, 100);
-  analogWrite(engine2_pin, 100);
+  analogWrite(engine_pin, 100);
   delay(300);
-  analogWrite(engine1_pin, 150);
-  analogWrite(engine2_pin, 150);
+  analogWrite(engine_pin, 150);
   delay(300);
-  analogWrite(engine1_pin, 250);
-  analogWrite(engine2_pin, 250);
+  analogWrite(engine_pin, 250);
   delay(1500);
-  analogWrite(engine1_pin, 10);
-  analogWrite(engine2_pin, 10);
+  analogWrite(engine_pin, 10);
   delay(500);
-  analogWrite(engine1_pin, 250);
-  analogWrite(engine2_pin, 250);
+  analogWrite(engine_pin, 250);
   delay(2000);
 
   if (keep)
@@ -55,14 +49,13 @@ void after_burner(uint32_t engine1_pin, uint32_t engine2_pin, uint32_t side_pin,
   }
   else
   {
-    normal_engine(engine1_pin, engine2_pin, side_pin);
+    normal_engine(engine_pin, side_pin);
   }
 }
 
-void normal_engine(uint32_t engine1_pin, uint32_t engine2_pin, uint32_t side_pin)
+void normal_engine(uint32_t engine_pin, uint32_t side_pin)
 {
-  analogWrite(engine1_pin, 10);
-  analogWrite(engine2_pin, 10);
+  analogWrite(engine_pin, 10);
   analogWrite(side_pin, 50);
 }
 
