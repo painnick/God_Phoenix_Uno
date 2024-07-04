@@ -3,15 +3,12 @@
 /**
  * 색상 계산
  **/
-uint32_t Wheel(Adafruit_NeoPixel *strip, byte WheelPos)
-{
+uint32_t Wheel(Adafruit_NeoPixel *strip, byte WheelPos) {
   WheelPos = 255 - WheelPos;
-  if (WheelPos < 85)
-  {
+  if (WheelPos < 85) {
     return strip->Color(255 - WheelPos * 3, 0, WheelPos * 3);
   }
-  if (WheelPos < 170)
-  {
+  if (WheelPos < 170) {
     WheelPos -= 85;
     return strip->Color(0, WheelPos * 3, 255 - WheelPos * 3);
   }
@@ -26,36 +23,31 @@ uint32_t Wheel(Adafruit_NeoPixel *strip, byte WheelPos)
  * side_pin - 엔지 사이드 LED의 핀 번호
  * keep - 밝기를 유지할지 여부. false인 경우 어둡게 마무리
  **/
-void after_burner(uint32_t engine_pin, uint32_t side_pin, bool keep)
-{
+void after_burner(uint32_t engine_pin, uint32_t side_pin, bool keep) {
   analogWrite(side_pin, 250);
 
   analogWrite(engine_pin, 50);
   delay(300);
-  analogWrite(engine_pin, 100);
+  analogWrite(engine_pin, 255);
   delay(300);
-  analogWrite(engine_pin, 150);
+  analogWrite(engine_pin, 511);
   delay(300);
-  analogWrite(engine_pin, 250);
+  analogWrite(engine_pin, 1023);
   delay(1500);
-  analogWrite(engine_pin, 10);
+  analogWrite(engine_pin, 50);
   delay(500);
-  analogWrite(engine_pin, 250);
+  analogWrite(engine_pin, 1023);
   delay(2000);
 
-  if (keep)
-  {
+  if (keep) {
     analogWrite(side_pin, 250);
-  }
-  else
-  {
+  } else {
     normal_engine(engine_pin, side_pin);
   }
 }
 
-void normal_engine(uint32_t engine_pin, uint32_t side_pin)
-{
-  analogWrite(engine_pin, 10);
+void normal_engine(uint32_t engine_pin, uint32_t side_pin) {
+  analogWrite(engine_pin, 50);
   analogWrite(side_pin, 50);
 }
 
@@ -66,20 +58,16 @@ void normal_engine(uint32_t engine_pin, uint32_t side_pin)
  * wait - 대기 시간(ms)
  * dual - 가운데를 기준으로 퍼저나가는지 여부(헤드 부분)
  **/
-void rainbowCycle(Adafruit_NeoPixel *strip, uint8_t wait, bool dual)
-{
+void rainbowCycle(Adafruit_NeoPixel *strip, uint8_t wait, bool dual) {
   uint16_t pixelIndex, colorIndex;
 
   int numPixels = dual ? strip->numPixels() / 2 : strip->numPixels();
 
-  for (colorIndex = 0; colorIndex < 256; colorIndex++)
-  { // 5 cycles of all colors on wheel
-    for (pixelIndex = 0; pixelIndex < numPixels; pixelIndex++)
-    {
+  for (colorIndex = 0; colorIndex < 256; colorIndex++) {  // 5 cycles of all colors on wheel
+    for (pixelIndex = 0; pixelIndex < numPixels; pixelIndex++) {
       uint32_t color = Wheel(strip, ((pixelIndex * 256 / numPixels) + colorIndex) & 255);
       strip->setPixelColor(pixelIndex, color);
-      if (dual)
-      {
+      if (dual) {
         strip->setPixelColor((numPixels * 2 - 1) - pixelIndex, color);
       }
     }
@@ -96,33 +84,28 @@ void rainbowCycle(Adafruit_NeoPixel *strip, uint8_t wait, bool dual)
  * wait - 대기 시간(ms)
  * dual - 가운데를 기준으로 퍼저나가는지 여부(헤드 부분)
  **/
-void colorWipe(Adafruit_NeoPixel *strip, uint32_t color, uint8_t wait, bool dual, COLOR_FILL_TYPE type)
-{
+void colorWipe(Adafruit_NeoPixel *strip, uint32_t color, uint8_t wait, bool dual, COLOR_FILL_TYPE type) {
   int numPixels = dual ? strip->numPixels() / 2 : strip->numPixels();
-  for (uint16_t pixelIndex = 0; pixelIndex < numPixels; pixelIndex++)
-  {
+  for (uint16_t pixelIndex = 0; pixelIndex < numPixels; pixelIndex++) {
     bool isSet = false;
 
-    switch (type)
-    {
-    case COLOR_FILL_TYPE::ALL:
-      isSet = true;
-      break;
-    case COLOR_FILL_TYPE::ODD:
-      isSet = (pixelIndex % 2) == 1;
-      break;
-    case COLOR_FILL_TYPE::EVEN:
-      isSet = (pixelIndex % 2) == 0;
-      break;
-    default:
-      break;
+    switch (type) {
+      case COLOR_FILL_TYPE::ALL:
+        isSet = true;
+        break;
+      case COLOR_FILL_TYPE::ODD:
+        isSet = (pixelIndex % 2) == 1;
+        break;
+      case COLOR_FILL_TYPE::EVEN:
+        isSet = (pixelIndex % 2) == 0;
+        break;
+      default:
+        break;
     }
 
-    if (isSet)
-    {
+    if (isSet) {
       strip->setPixelColor((numPixels - 1) - pixelIndex, color);
-      if (dual)
-      {
+      if (dual) {
         strip->setPixelColor(numPixels + pixelIndex, color);
       }
       strip->show();
@@ -131,18 +114,15 @@ void colorWipe(Adafruit_NeoPixel *strip, uint32_t color, uint8_t wait, bool dual
   }
 }
 
-void blink(Adafruit_NeoPixel *strip1, Adafruit_NeoPixel *strip2, uint8_t wait)
-{
+void blink(Adafruit_NeoPixel *strip1, Adafruit_NeoPixel *strip2, uint8_t wait) {
   uint32_t colors1[16];
   uint32_t colors2[16];
 
-  for (int i = 0; i < strip1->numPixels(); i++)
-  {
+  for (int i = 0; i < strip1->numPixels(); i++) {
     colors1[i] = strip1->getPixelColor(i);
     strip1->setPixelColor(i, 0);
   }
-  for (int i = 0; i < strip2->numPixels(); i++)
-  {
+  for (int i = 0; i < strip2->numPixels(); i++) {
     colors2[i] = strip2->getPixelColor(i);
     strip2->setPixelColor(i, 0);
   }
@@ -152,12 +132,10 @@ void blink(Adafruit_NeoPixel *strip1, Adafruit_NeoPixel *strip2, uint8_t wait)
 
   delay(wait);
 
-  for (int i = 0; i < strip1->numPixels(); i++)
-  {
+  for (int i = 0; i < strip1->numPixels(); i++) {
     strip1->setPixelColor(i, colors1[i]);
   }
-  for (int i = 0; i < strip2->numPixels(); i++)
-  {
+  for (int i = 0; i < strip2->numPixels(); i++) {
     strip2->setPixelColor(i, colors2[i]);
   }
 
