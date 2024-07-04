@@ -15,12 +15,12 @@
 #ifdef _DEBUG
 #define STRIP_BRIGHT_NORMAL 10
 #define STRIP_BRIGHT_HIGH 50
-#define VOLUME 10
 #else
 #define STRIP_BRIGHT_NORMAL 100
 #define STRIP_BRIGHT_HIGH 250
-#define VOLUME 20
 #endif
+
+#define VOLUME 10
 
 #define HEAD_PIN 0      // #1 기수 앞 부분의 NeoPixel
 #define COCKPIT_PIN 1   // #2 콕핏 부분의 NeoPixel
@@ -59,9 +59,12 @@ void setup() {
   dfmp3.begin(9600, 1000);
 
   dfmp3.reset();
+  waitMilliseconds(100);
+
+  dfmp3.setVolume(VOLUME);
+  waitMilliseconds(100);
 
   normalColor = head_strip.Color(255, 140, 0);
-  // normalColor = head_strip.Color(random(63, 191), random(63, 191), random(63, 191));
 
   TimerTc3.initialize(1000000);
   TimerTc3.attachInterrupt(timerISR);
@@ -81,18 +84,11 @@ PROCESSOR processor = PROCESSOR::PROCESSOR_NOSONG;
 int oldState = -1;
 int normalStep = -1;
 int phoenixStep = -1;
-int nosongStep = -1;
+int nosongStep = 0;
 void loop() {
   waitMilliseconds(500);
 
   int newState = digitalRead(BUTTON_PIN) == HIGH ? LOW : HIGH;
-#ifdef _DEBUG
-  if (newState == HIGH) {
-    Serial.println("Button Click!");
-  } else {
-    Serial.println("Button...");
-  }
-#endif
 
   switch (processor) {
     case PROCESSOR::PROCESSOR_NORMAL:  // == LOW
@@ -168,20 +164,16 @@ void waitMilliseconds(uint16_t msWait) {
  * 노말 모드
  **/
 void normal_form(int &step) {
+#ifdef _DEBUG
+  Serial.println("Process - Normal - Step#" + String(step));
+#endif
   switch (step) {
     case 0:  // mp3 재생 시작
-#ifdef _DEBUG
-      Serial.println("Process - Normal");
-#endif
-
       head_strip.setBrightness(STRIP_BRIGHT_NORMAL);
       cockpit_strip.setBrightness(STRIP_BRIGHT_NORMAL);
 
       colorWipe(&head_strip, normalColor, 1, true);
       colorWipe(&cockpit_strip, normalColor, 1, false);
-
-      dfmp3.setVolume(VOLUME);
-      waitMilliseconds(100);
 
       dfmp3.playMp3FolderTrack(1);
       waitMilliseconds(100);
@@ -276,20 +268,16 @@ void normal_form(int &step) {
  * 레인보우 효과와 함께 일반 LED들의 밝기도 최대로 한다.
  **/
 void phoenix_form(int &step) {
+#ifdef _DEBUG
+  Serial.println("Process - PHOENIX! - Step#" + String(step));
+#endif
   switch (step) {
     case 0:
-#ifdef _DEBUG
-      Serial.println("Process - PHOENIX!");
-#endif
-
       head_strip.setBrightness(STRIP_BRIGHT_HIGH);
       cockpit_strip.setBrightness(STRIP_BRIGHT_HIGH);
 
       colorWipe(&head_strip, normalColor, 1, true);
       colorWipe(&cockpit_strip, normalColor, 1, false);
-
-      dfmp3.setVolume(VOLUME);
-      waitMilliseconds(100);
 
       dfmp3.playMp3FolderTrack(2);
       waitMilliseconds(100);
@@ -323,6 +311,9 @@ void phoenix_form(int &step) {
 }
 
 void no_song_form(int &step) {
+#ifdef _DEBUG
+  Serial.println("Process - No Song - Step#" + String(step));
+#endif
   switch (step) {
     case 0:
       head_strip.setBrightness(STRIP_BRIGHT_NORMAL);
