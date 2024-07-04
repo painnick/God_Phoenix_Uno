@@ -13,8 +13,8 @@
 #define _DEBUG 1
 
 #ifdef _DEBUG
-#define STRIP_BRIGHT_NORMAL 10
-#define STRIP_BRIGHT_HIGH 50
+#define STRIP_BRIGHT_NORMAL 20
+#define STRIP_BRIGHT_HIGH 100
 #else
 #define STRIP_BRIGHT_NORMAL 100
 #define STRIP_BRIGHT_HIGH 250
@@ -290,8 +290,8 @@ void phoenix_form(int &step) {
       after_burner(ENGINE_PIN, TAILSIDE_PIN, true);
       break;
     case 2:
-      head_strip.setBrightness(STRIP_BRIGHT_NORMAL);
-      cockpit_strip.setBrightness(STRIP_BRIGHT_NORMAL);
+      head_strip.setBrightness(STRIP_BRIGHT_HIGH);
+      cockpit_strip.setBrightness(STRIP_BRIGHT_HIGH);
 
       for (int i = 0; i < 5; i++) {
         rainbowCycle(&head_strip, 1, true);
